@@ -3,7 +3,7 @@
 The repository contains the code of the Neuronal Attention Circuit (NAC) developed at the Networked Intelligent Control (NIC) Lab at the University of Science and Technology of China (USTC).
 
 
-## LAN Model Usage Example
+## NAC Model Usage Example
 
 ```python
 import tensorflow as tf
@@ -70,7 +70,7 @@ python PAR_trainer.py
 
 ---
 
-### 4. Lane Keeping for Autonomous Vehicles
+### 4. NACe Keeping for Autonomous Vehicles
 
 **a) CarRacing (`CarRacing_exp/`)**
 
@@ -86,7 +86,7 @@ python drive.py
 2. Execute:
 
 ```bash
-python drive.py model_weights/Udacity_LAN.keras
+python drive.py model_weights/Udacity_NAC.keras
 ```
 [Watch the demo on YouTube](https://youtu.be/tKfO55TwN0M)
 
@@ -105,7 +105,7 @@ python rul_trainer.py
 
 
 ### 6. Seq2Seq Time-Series Imputation
-Code for LAN imputation experiment.
+Code for NAC imputation experiment.
 
 * Code and data available in: `Impute_exp/`
 ```bash
@@ -114,7 +114,7 @@ python impute.py
 ```
 
 ### 7. Run Time Experiment
-Code for LAN run time experiment.
+Code for NAC run time experiment.
 
 * Code and data available in: `RunTime_exp/`
 ```bash
@@ -123,7 +123,7 @@ python run_time.py
 ```
 
 ### 8. Ablation Experiments
-Code for LAN ablation experiments.
+Code for NAC ablation experiments.
 
 * Code and data available in: `ablation_exp/`
 
