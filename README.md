@@ -1,6 +1,6 @@
 # Neuronal Attention Circuit (NAC)
 ---
-The repository contains the code of the Neuronal Attention Circuit developed at the Networked Intelligent Control (NIC) Lab at the University of Science and Technology of China (USTC).
+The repository contains the code of the Neuronal Attention Circuit (NAC) developed at the Networked Intelligent Control (NIC) Lab at the University of Science and Technology of China (USTC).
 
 
 ## LAN Model Usage Example
@@ -40,7 +40,7 @@ model.compile(
 
 ### 1. Universal Approximation Verification
 
-Demonstration and verification of LAN’s universal approximation capability.
+Demonstration and verification of NAC’s universal approximation capability.
 
 ![Universal Approximation Demo](plots/uat.gif)
 
