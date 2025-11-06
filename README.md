@@ -71,14 +71,14 @@ python PAR_trainer.py
 
 ---
 
-### 4. NACe Keeping for Autonomous Vehicles
+### 4. Lane Keeping for Autonomous Vehicles
 
 **a) CarRacing (`CarRacing_exp/`)**
 
 ```bash
 python drive.py
 ```
-[Watch the demo on YouTube](https://youtu.be/PAclVXbzsms)
+[Watch the demo on YouTube](https://www.youtube.com/watch?v=kwTNU8aV8-I)
 
 
 **b) Udacity Simulator (`Udacity_exp/`)**
@@ -89,7 +89,7 @@ python drive.py
 ```bash
 python drive.py model_weights/Udacity_NAC.keras
 ```
-[Watch the demo on YouTube](https://youtu.be/tKfO55TwN0M)
+[Watch the demo on YouTube](https://www.youtube.com/watch?v=mMRVsNUQ8i0)
 
 ---
 
