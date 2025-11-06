@@ -15,16 +15,17 @@ x = NAC(
     d_model=64,         # Dimensionality of the model (feature size per token)
     num_heads=16,       # Number of attention heads
     delta_t=1.0,        # Time-step for integration
-    sparsity=0.5,       # Controls how sparse the attention or activations are
-    topk=8,             # Limits attention to top-k elements (for efficiency/sparsity)
+    sparsity=0.5,       # Controls how sparse the NCP architecture
+    topk=8,             # Limits attention to top-k elements (for sparsity)
     tau_epsilon=1e-6,   # Small value for numerical stability
     use_bias=True,      # Whether to include bias terms in linear layers
     dropout=0.1,        # Dropout rate for regularization
-    activation='sigmoid',   # Activation function used inside the layer
+    activation='sigmoid',   # Activation function for output projection
     return_sequences=False  # Whether to return the full sequence or just the last output
+    return_attention=False  # Whether to return the attention weights
 )(inputs)
 
-outputs = tf.keras.layers.Dense(1)(attn)
+outputs = tf.keras.layers.Dense(1)(x)
 model = tf.keras.Model(inputs=inputs, outputs=outputs)
 
 # Compile the model
