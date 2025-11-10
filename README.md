@@ -46,7 +46,7 @@ model.compile(
 
 Demonstration and verification of NAC’s universal approximation capability.
 
-![Universal Approximation Demo](plots/uat.gif)
+![Universal Approximation Demo](plots/UAT.gif)
 
 ---
 
