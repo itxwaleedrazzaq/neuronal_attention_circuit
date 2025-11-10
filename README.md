@@ -12,18 +12,21 @@ from neuronal_attention_circuit import NAC
 # Create the model
 inputs = tf.keras.Input(shape=(1, 1))
 x = NAC(
-    d_model=64,         # Dimensionality of the model (feature size per token)
-    num_heads=16,       # Number of attention heads
-    delta_t=1.0,        # Time-step for integration
-    sparsity=0.5,       # Controls how sparse the NCP architecture
-    topk=8,             # Limits attention to top-k elements (for sparsity)
-    tau_epsilon=1e-6,   # Small value for numerical stability
-    use_bias=True,      # Whether to include bias terms in linear layers
-    dropout=0.1,        # Dropout rate for regularization
-    activation='sigmoid',   # Activation function for output projection
-    return_sequences=False  # Whether to return the full sequence or just the last output
-    return_attention=False  # Whether to return the attention weights
+    d_model=64,                  # Dimension of the model
+    num_heads=16,                # Number of attention heads
+    mode='exact',                # Integration mode: 'exact', 'euler', or 'steady'
+    topk=8,                      # Number of top-k pairwise interactions
+    dt=1.0,                      # Time step for integration
+    delta_t=0.5,                 # Time step for Euler mode
+    sparsity=0.5,                # Sparsity level for NCP wiring
+    euler_steps=6,               # Number of Euler integration steps
+    dropout=0.0,                 # Dropout rate
+    tau_epsilon=1e-5,            # Small positive value for temporal head
+    activation='sigmoid',        # Activation function
+    return_sequences=False,      # Return full sequences if True, else last output
+    return_attention=False       # Return attention weights if True
 )(inputs)
+
 
 outputs = tf.keras.layers.Dense(1)(x)
 model = tf.keras.Model(inputs=inputs, outputs=outputs)
@@ -105,32 +108,13 @@ python rul_trainer.py
 ```
 
 
-### 6. Seq2Seq Time-Series Imputation
-Code for NAC imputation experiment.
-
-* Code and data available in: `Impute_exp/`
-```bash
-# Example: how to run
-python impute.py
-```
-
-### 7. Run Time Experiment
+### 6. Run Time Experiment
 Code for NAC run time experiment.
 
 * Code and data available in: `RunTime_exp/`
 ```bash
 # Example: how to run
 python run_time.py
-```
-
-### 8. Ablation Experiments
-Code for NAC ablation experiments.
-
-* Code and data available in: `ablation_exp/`
-
-```bash
-# Example: how to run
-python ablation.py
 ```
 
 ---
