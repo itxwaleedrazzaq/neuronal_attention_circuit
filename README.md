@@ -117,8 +117,3 @@ Code for NAC run time experiment.
 python run_time.py
 ```
 
----
-
-## License
-
-[Specify your license here, e.g., MIT License]
