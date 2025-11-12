@@ -14,7 +14,7 @@ inputs = tf.keras.Input(shape=(1, 1))
 x = NAC(
     d_model=64,                  # Dimension of the model
     num_heads=16,                # Number of attention heads
-    mode='exact',                # Integration mode: 'exact', 'euler', or 'steady'
+    mode='exact',                # Computation mode: 'exact', 'euler', or 'steady'
     topk=8,                      # Number of top-k pairwise interactions
     dt=1.0,                      # Time step for integration
     delta_t=0.5,                 # Time step for Euler mode
