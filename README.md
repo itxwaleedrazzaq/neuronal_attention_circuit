@@ -57,7 +57,7 @@ Training and evaluation on the event-based MNIST dataset.
 * Code available in: `mnist_exp/`
 
 ```bash
-python mnist_trainer.py
+python mnist_kfold.py
 ```
 
 ---
@@ -69,7 +69,7 @@ Activity recognition experiment implementation.
 * Code available in: `PAR_exp/`
 
 ```bash
-python PAR_trainer.py
+python PAR_kfold.py
 ```
 
 ---
@@ -104,7 +104,7 @@ Dataset and code for RUL estimation experiments.
 
 ```bash
 # Example: how to run
-python rul_trainer.py
+python rul_kfold.py
 ```
 
 
