@@ -25,12 +25,15 @@ class NAC(tf.keras.layers.Layer):
         self,
         d_model: int,
         num_heads: int,
-        activation=None,
         topk: int = 8,
+        mode : str = 'exact',           # 'steady', 'euler', or 'exact'
+        euler_steps : int = 5,
         sparsity: float = 0.5,
-        tau_epsilon: float = 1e-6,
-        delta_t: float = 1.0,
+        dt: float = 1.0,
+        delta_t: float = 0.5,
+        activation=None,
         dropout: float = 0.0,
+        tau_epsilon: float = 1e-6,
         use_bias: bool = True,
         return_attention: bool = False,
         return_sequences: bool = False,
@@ -42,11 +45,14 @@ class NAC(tf.keras.layers.Layer):
         Args:
             d_model: Model dimension (must be divisible by num_heads)
             num_heads: Number of attention heads
-            activation: Optional activation function for the output
             topk: Number of top key candidates per query
+            mode: computation mode ('steady', 'euler', or 'exact')
+            euler_steps: Number of Euler integration steps (if mode='euler')
             sparsity: Sparsity factor for AutoNCP wiring (0.0–0.9)
+            dt: Time step used for integration
+            delta_t: Time increment for Euler integration
+            activation: Optional activation function for the output
             tau_epsilon: Small constant added to tau for stability
-            delta_t: Time step used for integration
             dropout: Dropout rate for attention weights
             use_bias: Whether to include bias terms in Dense layers
             return_attention: If True, call() also returns attention weights
@@ -57,19 +63,23 @@ class NAC(tf.keras.layers.Layer):
         # Basic checks and parameter setup
         assert d_model % num_heads == 0, "d_model must be divisible by num_heads"
         assert 0.0 <= sparsity <= 0.9, "sparsity must be in [0.0, 0.9]"
+        assert mode in ('steady', 'euler', 'exact'), "mode must be 'steady', 'euler' or 'exact'"
 
         self.d_model = int(d_model)
         self.num_heads = int(num_heads)
         self.depth = self.d_model // self.num_heads
-        self.delta_t = float(delta_t)
-        self.activation = tf.keras.activations.get(activation)
+        self.topk = int(topk)
+        self.mode = mode
+        self.euler_steps = int(euler_steps)
         self.sparsity = float(sparsity)
-        self.tau_epsilon = float(tau_epsilon)
+        self.delta_t = float(delta_t)
+        self.dt = float(dt)
+        self.activation = tf.keras.activations.get(activation)
         self.dropout_rate = float(dropout)
+        self.tau_epsilon = float(tau_epsilon)
         self.use_bias = bool(use_bias)
         self.return_attention = bool(return_attention)
         self.return_sequences = bool(return_sequences)
-        self.topk = int(topk)
 
         # Projections for query, key, and value
         self.q_proj = self._make_sensory_projections("q_proj")
@@ -251,8 +261,20 @@ class NAC(tf.keras.layers.Layer):
         # Compute phi, tau, and time interpolation
         phi, tau, t_interp, topk_idx = self.compute_phi_tau(qh, kh, t)
 
-        # Compute attention logits using LAN-Exact
-        attn_logits = (phi / tau) * (1.0 - tf.exp(-tau * t_interp))
+
+        # Solve dynamics based on chosen mode
+        if self.mode == 'steady':
+            attn_logits = phi / tau
+
+        elif self.mode == 'exact':
+            attn_logits = (phi / tau) * (1 - tf.exp(-tau * t_interp))
+
+        elif self.mode == 'euler':
+            a = tf.zeros_like(phi)
+            for _ in range(self.euler_steps):
+                increment = self.delta_t * (-tau * a + phi)
+                a = a + increment
+            attn_logits = a
 
         # Apply mask if provided
         if mask is not None:
@@ -269,9 +291,8 @@ class NAC(tf.keras.layers.Layer):
         vh_topk = tf.gather(vh, topk_idx, batch_dims=2, axis=2)
 
         # integration
-        dt = tf.cast(self.delta_t, attn_weights.dtype)
         weighted = attn_weights[..., tf.newaxis] * vh_topk
-        out_per_head = tf.reduce_sum(weighted, axis=3) * dt
+        out_per_head = tf.reduce_sum(weighted, axis=3) * self.dt
 
         # Combine heads and project output
         combined = self.combine_heads(out_per_head)
@@ -297,12 +318,15 @@ class NAC(tf.keras.layers.Layer):
             {
                 "d_model": self.d_model,
                 "num_heads": self.num_heads,
-                "activation": tf.keras.activations.serialize(self.activation),
                 "topk": self.topk,
+                "mode": self.mode,
+                "euler_steps": self.euler_steps,
                 "sparsity": self.sparsity,
-                "tau_epsilon": self.tau_epsilon,
                 "delta_t": self.delta_t,
+                "dt": self.dt,
+                "activation": tf.keras.activations.serialize(self.activation),
                 "dropout": self.dropout_rate,
+                "tau_epsilon": self.tau_epsilon,
                 "return_attention": self.return_attention,
                 "return_sequences": self.return_sequences,
             }
